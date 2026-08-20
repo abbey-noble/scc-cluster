@@ -1,0 +1,12 @@
+- name: Install iperf3 (network testing tool)
+  hosts: cluster
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Install iperf3
+      ansible.builtin.apt:
+        name: iperf3
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
