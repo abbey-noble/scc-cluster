@@ -1,0 +1,45 @@
+- name: Manage cluster accounts
+  hosts: cluster
+  become: true
+  gather_facts: false
+
+  vars:
+    cluster_users:
+      - name: abbey
+        uid: 1002
+
+  tasks:
+    - name: Create user groups
+      ansible.builtin.group:
+        name: "{{ item.name }}"
+        gid: "{{ item.uid }}"
+        state: present
+      loop: "{{ cluster_users }}"
+
+    - name: Create user accounts
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        uid: "{{ item.uid }}"
+        group: "{{ item.name }}"
+        groups:
+          - users
+        append: true
+        shell: /bin/bash
+        state: present
+      loop: "{{ cluster_users }}"
+
+    - name: Set home directory permissions
+      ansible.builtin.file:
+        path: "/home/{{ item.name }}"
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
+        mode: "0750"
+        state: directory
+      loop: "{{ cluster_users }}"
+
+    - name: Install SSH public keys
+      ansible.posix.authorized_key:
+        user: "{{ item.name }}"
+        key: "{{ lookup('ansible.builtin.file', 'public_keys/' + item.name + '.pub') }}"
+        state: present
+      loop: "{{ cluster_users }}"
