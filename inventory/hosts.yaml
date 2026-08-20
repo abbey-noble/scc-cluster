@@ -1,0 +1,14 @@
+cluster:
+  hosts:
+    scc-01:
+      ansible_host: sc26.eu-west-2.cloud
+      ansible_port: 22201
+
+    scc-02:
+      ansible_host: sc26.eu-west-2.cloud
+      ansible_port: 22202
+
+  vars:
+    ansible_user: scc
+    ansible_python_interpreter: /usr/bin/python3
+    ansible_become_exe: /usr/bin/sudo.ws
