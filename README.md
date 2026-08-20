@@ -1,0 +1,1 @@
+# scc-cluster-ansible
